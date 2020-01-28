@@ -4,7 +4,7 @@ def is_near_rep(num):
     # Regex to find near rep digit numbers
     # The first regex will find any near rep digit numbers with unique digit in middle or end
     # The second regex will find any near rep digit numbers with unique digit at first digit
-    return num > 100 and (not not re.search(r'^(\d)\1*?((?!\1))\d(?:\1)*?$', str(num)) or not not re.search(r'^(\d)(?!\1)(\d)(\2)*?$', str(num)))
+    return num > 100 and (not not re.search(r'^(\d)\1+((?!\1))\d(?:\1)+$', str(num)) or not not re.search(r'^(\d)(?!\1)(\d)(\2)+$', str(num)))
 
 # The whole segmented sieve approach is nothing interesting
 # It's just a standard approach
