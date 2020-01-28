@@ -7,11 +7,11 @@ I've used 2 languages for the collection. `python` and `C`. The `C` only uses th
 You can write the python scripts normally just by using `python3` or `python` command.
 They use standard libraries so not extra requirements.
 
-The C code can either be compiled through `MSVC` or `CLANG`. It currently should be able to generate glitch primes upto 100B.
+The C code can either be compiled through `MSVC` or `CLANG`. It currently should be able to generate near rep digit primes upto 100B.
 
 # Methods
-* `sieve_and_str_check` : It uses a   standard segmented [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) approach and then a **string comprehension** to check if the prime number is also a glitch prime. This is the *fastest* method I came up with.
-* `sieve_and_regex` : It uses a   standard segmented [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) approach and then 2 **regex expressions** to check if the prime number is also a glitch prime. This is the *second fastest* method I came up with.
+* `sieve_and_str_check` : It uses a   standard segmented [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) approach and then a **string comprehension** to check if the prime number is also a near rep digit prime. This is the *fastest* method I came up with.
+* `sieve_and_regex` : It uses a   standard segmented [Sieve of Eratosthenes](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) approach and then 2 **regex expressions** to check if the prime number is also a near rep digit prime. This is the *second fastest* method I came up with.
 
 # SPEEEEED!
 
