@@ -1,10 +1,10 @@
 import time, math
 
-def is_glitch(num):
-    # Check if the number is a glitch number
+def is_near_rep(num):
+    # Check if the number is a near rep digit number
     numstr = str(num)
     if len(numstr) < 3:
-        # Glitch numbers must be at least 3 digits
+        # Near rep digit numbers must be at least 3 digits
         return False
     """
       Find the common character in the first few digits
@@ -38,7 +38,7 @@ def is_glitch(num):
         return False
 
 # The whole segmented sieve approach is nothing interesting
-# Tt's just a standard approach
+# It's just a standard approach
 
 def simple_sieve(limit): 
     primes_list = [] 
@@ -52,7 +52,7 @@ def simple_sieve(limit):
     for p in range(2, limit):  
         if mark[p]: 
             primes_list.append(p)
-            if is_glitch(p):
+            if is_near_rep(p):
                 print(p, end = ' ')
     return primes_list
 
@@ -73,7 +73,7 @@ def segmented_sieve(n):
             for j in range(lower_lim, high, primes_list[i]): 
                 mark[j - low] = False
         for i in range(low, high): 
-            if mark[i - low] and is_glitch(i): 
+            if mark[i - low] and is_near_rep(i): 
                 print(i, end = ' ') 
         low = low + segmented_lim 
         high = high + segmented_lim 

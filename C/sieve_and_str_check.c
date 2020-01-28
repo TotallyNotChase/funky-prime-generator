@@ -29,14 +29,14 @@ void append(int data)
     }
 }
 
-bool isGlitch(int num)
+bool isNearRep(int num)
 {
     int i, unqcharcount = 0;
     char str[100], commonchar;      // The str can hold a max of 100 digits - change if needed
     snprintf(str, 100, "%d", num);  // Converting the integer number to a string
     if (strlen(str) < 3)
     {
-        // Glitch numbers should be at least 3 digits
+        // Near Rep numbers should be at least 3 digits
         return false;
     }
     /**
@@ -121,7 +121,7 @@ void simpleSieve(int limit)
         if (mark[p])
         {
             append(p);
-            if (isGlitch(p))
+            if (isNearRep(p))
             {
                 printf("%d ", p);
             }
@@ -168,7 +168,7 @@ void segmentedSieve(int n)
 
         for (int i = low; i < high; i++)
         {
-            if (mark[i - low] == true && isGlitch(i))
+            if (mark[i - low] == true && isNearRep(i))
             {
                 printf("%d ", i);
             }

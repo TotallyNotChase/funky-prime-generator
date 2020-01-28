@@ -1,13 +1,13 @@
 import time, re, math
 
-def is_glitch(num):
-    # Regex to find glitch numbers
-    # The first regex will find any glitch numbers with glitch in middle or end
-    # The second regex will find any glitch numbers with glitch at first digit
+def is_near_rep(num):
+    # Regex to find near rep digit numbers
+    # The first regex will find any near rep digit numbers with unique digit in middle or end
+    # The second regex will find any near rep digit numbers with unique digit at first digit
     return num > 100 and (not not re.search(r'^(\d)\1*?((?!\1))\d(?:\1)*?$', str(num)) or not not re.search(r'^(\d)(?!\1)(\d)(\2)*?$', str(num)))
 
 # The whole segmented sieve approach is nothing interesting
-# Tt's just a standard approach
+# It's just a standard approach
 
 def simple_sieve(limit): 
     primes_list = [] 
@@ -21,7 +21,7 @@ def simple_sieve(limit):
     for p in range(2, limit):  
         if mark[p]: 
             primes_list.append(p)
-            if is_glitch(p):
+            if is_near_rep(p):
                 print(p, end = ' ')
     return primes_list
 
@@ -42,7 +42,7 @@ def segmented_sieve(n):
             for j in range(lower_lim, high, primes_list[i]): 
                 mark[j - low] = False
         for i in range(low, high): 
-            if mark[i - low] and is_glitch(i): 
+            if mark[i - low] and is_near_rep(i): 
                 print(i, end = ' ') 
         low = low + segmented_lim 
         high = high + segmented_lim 
