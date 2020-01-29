@@ -37,12 +37,9 @@ N = int(input("Enter upper limit: "))
 now = time.time()
 for num in range(101, N + 1, 2):
     uniq_set = uniqnum(num)
-    if len(uniq_set) == 2:
-        if list(uniq_set.values())[0] >= 2 and list(uniq_set.values())[1] == 1:
-          if isPrime(num):
-            near_rep_primes.append(num)
-        if list(uniq_set.values())[1] >= 2 and list(uniq_set.values())[0] == 1:
-          if isPrime(num):
+    if len(uniq_set) == 2 and ((list(uniq_set.values())[0] >= 2 and list(uniq_set.values())[1] == 1) or 
+                               (list(uniq_set.values())[1] >= 2 and list(uniq_set.values())[0] == 1)):
+        if isPrime(num):
             near_rep_primes.append(num)
 print(near_rep_primes)
 print("Took", str(time.time() - now))
