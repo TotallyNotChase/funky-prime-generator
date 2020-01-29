@@ -1,6 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
-
 import time
 
 def uniqnum(num):
@@ -13,7 +11,6 @@ def uniqnum(num):
     return unique_set
 
 def isPrime(n) : 
-  
     # Corner cases 
     if (n <= 1) : 
         return False
@@ -33,22 +30,19 @@ def isPrime(n) :
   
     return True
 
-count = 1
-x = 0
-last_num = 0
-counts = []
+num = 1
+
+near_rep_primes = []
+N = int(input("Enter upper limit: "))
 now = time.time()
-while True:
-    uniq_set = uniqnum(count)
+for num in range(101, N + 1, 2):
+    uniq_set = uniqnum(num)
     if len(uniq_set) == 2:
         if list(uniq_set.values())[0] >= 2 and list(uniq_set.values())[1] == 1:
-          if isPrime(count):
-            counts.append(count)
+          if isPrime(num):
+            near_rep_primes.append(num)
         if list(uniq_set.values())[1] >= 2 and list(uniq_set.values())[0] == 1:
-          if isPrime(count):
-            counts.append(count)
-    count += 2
-    if count >= 200000000:
-        break
-print(counts)
+          if isPrime(num):
+            near_rep_primes.append(num)
+print(near_rep_primes)
 print("Took", str(time.time() - now))

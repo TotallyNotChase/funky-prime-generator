@@ -53,7 +53,7 @@ def simple_sieve(limit):
         if mark[p]: 
             primes_list.append(p)
             if is_near_rep(p):
-                print(p, end = ' ')
+                near_rep_primes.append(p)
     return primes_list
 
 def segmented_sieve(n): 
@@ -74,12 +74,14 @@ def segmented_sieve(n):
                 mark[j - low] = False
         for i in range(low, high): 
             if mark[i - low] and is_near_rep(i): 
-                print(i, end = ' ') 
+                near_rep_primes.append(i) 
         low = low + segmented_lim 
         high = high + segmented_lim 
-  
-t0 = time.time()
+
+near_rep_primes = []
 N = input('Enter an upper limit: ')
+t0 = time.time()
 segmented_sieve(int(N))
+print(near_rep_primes)
 t1 = time.time()
 print('\nTime required:', t1 - t0)
