@@ -5,7 +5,7 @@
 #include<math.h>
 #include<time.h>
 
-unsigned long size = 5, current_slot = 0;
+unsigned int size = 5, current_slot = 0;
 unsigned long long* primes_arr;
 
 void append(unsigned long long data)
@@ -15,7 +15,7 @@ void append(unsigned long long data)
         primes_arr[current_slot++] = data;
         return;
     }
-    unsigned long long* newarr = realloc(primes_arr, (size += 5l) * sizeof(unsigned long long));
+    unsigned long long* newarr = realloc(primes_arr, (size += 5) * sizeof(unsigned long long));
     if (newarr != NULL)
     {
         newarr[current_slot++] = data;
@@ -91,7 +91,7 @@ bool isNearRep(unsigned long long num)
 
 // The following is just a standard approach to segmented sieve, nothing interesting
 
-void simpleSieve(unsigned long limit)
+void simpleSieve(unsigned long long limit)
 {
     unsigned long long p;
     if (primes_arr == NULL)
@@ -99,13 +99,13 @@ void simpleSieve(unsigned long limit)
         printf("\nAn error occured while allocating primes_arr for mark in simpleSieve\n");
         exit(1);
     }
-    bool* mark = malloc((limit + 1) * sizeof(bool));
+    bool* mark = malloc((limit + 1ll) * sizeof(bool));
     if (mark == NULL)
     {
         printf("\nAn error occured while allocating memory for mark in segmentedSieve\n");
         exit(1);
     }
-    memset(mark, true, sizeof(bool) * (limit + 1));
+    memset(mark, true, sizeof(bool) * (limit + 1ll));
 
     for (p = 2; p * p < limit; p++)
     {
@@ -133,11 +133,11 @@ void simpleSieve(unsigned long limit)
 
 void segmentedSieve(unsigned long long n)
 {
-    unsigned long limit = (unsigned long)floor(sqrt(n)) + 1l;
+    unsigned long long limit = (unsigned long long)floor(sqrt(n)) + 1ll;
     simpleSieve(limit);
 
-    unsigned long low = limit;
-    unsigned long high = 2 * limit;
+    unsigned long long low = limit;
+    unsigned long long high = 2 * limit;
 
     while (low < n)
     {
@@ -145,17 +145,17 @@ void segmentedSieve(unsigned long long n)
         {
             high = n;
         }
-        bool* mark = malloc((limit + 1) * sizeof(bool));
+        bool* mark = malloc((limit + 1ll) * sizeof(bool));
         if (mark == NULL)
         {
             printf("\nAn error occured while allocating memory for mark in segmentedSieve\n");
             exit(1);
         }
-        memset(mark, true, sizeof(bool) * (limit + 1));
+        memset(mark, true, sizeof(bool) * (limit + 1ll));
 
         for (unsigned long long i = 0; i < current_slot; i++)
         {
-            unsigned long long lower_lim = (unsigned long)floor(low / primes_arr[i]) * primes_arr[i];
+            unsigned long long lower_lim = (unsigned long long)floor(low / primes_arr[i]) * primes_arr[i];
             if (lower_lim < low)
             {
                 lower_lim += primes_arr[i];
