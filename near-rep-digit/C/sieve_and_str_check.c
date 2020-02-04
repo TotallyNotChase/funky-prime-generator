@@ -2,43 +2,94 @@
 #include<stdlib.h>
 #include<string.h>
 #include<stdbool.h>
+#include<stdint.h>
+#include<inttypes.h>
 #include<math.h>
 #include<time.h>
 
-unsigned int size = 5, current_slot = 0;
-unsigned long long* primes_arr;
+/**
+* The following sieve of eratosthenes is a C implementation of an
+* improved sieve of eratosthenes algorithm written by Kim Wilsch in C++
+* ///////////////////////////////////////////////////////////////////////
+* COPYRIGHT NOTICE:-
+* BSD 2-Clause License
+*
+* Copyright (c) 2010 - 2019, Kim Walisch.
+* All rights reserved.
+* ///////////////////////////////////////////////////////////////////////
+* Apart from the algorithm idea itself, everything else is written by
+* [https://github.com/TotallyNotChase]
+*/
 
-void append(unsigned long long data)
+typedef struct uint64_vector
 {
-    if ((current_slot + 1) < size)
+    uint64_t* data;
+    uint64_t capacity, size;
+} uint64vec_t;
+
+typedef struct char_vector
+{
+    bool* data;
+    uint64_t size, count;
+} boolvec_t;
+
+uint64_t L1D_CACHE;
+
+uint64vec_t create_uint64_vector(uint64_t size)
+{
+    uint64vec_t vector;
+    vector.data = malloc(size * sizeof(uint64_t));
+    if (vector.data == NULL)
     {
-        primes_arr[current_slot++] = data;
+        printf("\nAn error occured while allocating memory for uint64_vector\n");
+        exit(1);
+    }
+    vector.capacity = size;
+    vector.size = 0;
+    return vector;
+}
+
+boolvec_t create_bool_vector(uint64_t size)
+{
+    boolvec_t vector;
+    vector.data = malloc(size * sizeof(bool));
+    if (vector.data == NULL)
+    {
+        printf("\nAn error occured while allocating memory for bool_vector\n");
+        exit(1);
+    }
+    memset(vector.data, true, sizeof(bool) * size);
+    vector.size = size;
+    vector.count = 0;
+    return vector;
+}
+
+void uint64_vector_append(uint64vec_t* vector, uint64_t data)
+{
+    if ((vector->size + 1) < vector->capacity)
+    {
+        vector->data[vector->size++] = data;
         return;
     }
-    unsigned long long* newarr = realloc(primes_arr, (size += 5) * sizeof(unsigned long long));
-    if (newarr != NULL)
+    vector->data = realloc(vector->data, (vector->capacity *= 2) * sizeof(uint64_t));
+    if (vector->data == NULL)
     {
-        newarr[current_slot++] = data;
-        primes_arr = newarr;
-    }
-    else
-    {
-        printf("\nAn error occured while re-allocating memory\n");
+        printf("\nAn error occured while re-allocating memory for uint64_vector\n");
         exit(1);
     }
 }
 
-int countDigits(unsigned long long num)
+int countDigits(uint64_t num)
 {
-    return snprintf(NULL, 0, "%llu", num) - (num < 0);
+    return snprintf(NULL, 0, "%" SCNu64, num) - (num < 0);
 }
 
-bool isNearRep(unsigned long long num)
+bool isNearRep(uint64_t num)
 {
     int i, unqcharcount = 0, digitcount = countDigits(num);
     char* str, commonchar;
     str = malloc((digitcount + 1) * sizeof(char));
-    snprintf(str, digitcount + 1, "%llu", num);    // Converting the integer number to a string
+    snprintf(str, digitcount + 1, "%" SCNu64, num);    // Converting the integer number to a string
     if (digitcount < 3)
     {
         // Near Rep numbers should be at least 3 digits
@@ -89,106 +140,80 @@ bool isNearRep(unsigned long long num)
     }
 }
 
-// The following is just a standard approach to segmented sieve, nothing interesting
-
-void simpleSieve(unsigned long long limit)
+size_t approximate_size(uint64_t limit)
 {
-    unsigned long long p;
-    if (primes_arr == NULL)
+    int i;
+    float x = 1;
+    for (i = log(limit); i > 0; i--)
     {
-        printf("\nAn error occured while allocating primes_arr for mark in simpleSieve\n");
-        exit(1);
+        x *= 2.5;
     }
-    bool* mark = malloc((limit + 1ll) * sizeof(bool));
-    if (mark == NULL)
-    {
-        printf("\nAn error occured while allocating memory for mark in segmentedSieve\n");
-        exit(1);
-    }
-    memset(mark, true, sizeof(bool) * (limit + 1ll));
-
-    for (p = 2; p * p < limit; p++)
-    {
-        if (mark[p])
-        {
-            for (unsigned long long i = p * 2; i < limit; i += p)
-            {
-                mark[i] = false;
-            }
-        }
-    }
-
-    for (p = 2; p < limit; p++)
-    {
-        if (mark[p])
-        {
-            append(p);
-            if (isNearRep(p))
-            {
-                printf("%llu, ", p);
-            }
-        }
-    }
+    return (size_t) x;
 }
 
-void segmentedSieve(unsigned long long n)
+void segmented_sieve(uint64_t limit)
 {
-    unsigned long long limit = (unsigned long long)floor(sqrt(n)) + 1ll;
-    simpleSieve(limit);
-
-    unsigned long long low = limit;
-    unsigned long long high = 2 * limit;
-
-    while (low < n)
+    int64_t low, high, i = 3, j, k, n = 3, s = 3;
+    size_t i_size, approx_arr_size = approximate_size(limit);
+    uint64_t sqrtval = (uint64_t)sqrt(limit);
+    uint64_t segment_size = sqrtval < L1D_CACHE ? L1D_CACHE : sqrtval;
+    uint64vec_t prime_arr = create_uint64_vector(approx_arr_size);
+    uint64vec_t multiples = create_uint64_vector(approx_arr_size);
+    boolvec_t sieve = create_bool_vector(segment_size);
+    boolvec_t is_prime = create_bool_vector(sqrtval + 1);
+    for (low = 0; low <= limit; low += segment_size)
     {
-        if (high >= n)
+        memset(sieve.data, true, sizeof(bool) * sieve.size);
+        high = low + segment_size - 1;
+        high = high < limit ? high : limit;
+        for (; i * i <= high; i += 2)
         {
-            high = n;
-        }
-        bool* mark = malloc((limit + 1ll) * sizeof(bool));
-        if (mark == NULL)
-        {
-            printf("\nAn error occured while allocating memory for mark in segmentedSieve\n");
-            exit(1);
-        }
-        memset(mark, true, sizeof(bool) * (limit + 1ll));
-
-        for (unsigned long long i = 0; i < current_slot; i++)
-        {
-            unsigned long long lower_lim = (unsigned long long)floor(low / primes_arr[i]) * primes_arr[i];
-            if (lower_lim < low)
+            if (is_prime.data[i])
             {
-                lower_lim += primes_arr[i];
-            }
-            for (unsigned long long j = lower_lim; j < high; j += primes_arr[i])
-            {
-                mark[j - low] = false;
+                for (j = i * i; j <= sqrtval; j += i)
+                {
+                    is_prime.data[j] = false;
+                }
             }
         }
-
-        for (unsigned long long i = low; i < high; i++)
+        for (; s * s <= high; s += 2)
         {
-            if (mark[i - low] && isNearRep(i))
+            if (is_prime.data[s])
             {
-                printf("%llu, ", i);
+                uint64_vector_append(&prime_arr, s);
+                uint64_vector_append(&multiples, s * s - low);
             }
         }
-        low = low + limit;
-        high = high + limit;
-        free(mark);
+        for (i_size = 0; i_size < prime_arr.size; i_size++)
+        {
+            j = multiples.data[i_size];
+            for (k = prime_arr.data[i_size] * 2; j < segment_size; j += k)
+            {
+                sieve.data[j] = false;
+            }
+            multiples.data[i_size] = j - segment_size;
+        }
+        for (; n <= high; n += 2)
+        {
+            if (sieve.data[n - low] && isNearRep(n))
+            {
+                printf("%" SCNu64 ", ", n);
+            }
+        }
     }
 }
 
 int main()
 {
-    unsigned long long N;
+    uint64_t N;
     double time_taken;
-    primes_arr = malloc(size * sizeof(unsigned long long));
+    printf("Enter your CPUs L1D Cache per core (in bytes): ");
+    scanf_s("%" SCNu64, &L1D_CACHE);
     printf("Enter upper limit: ");
-    scanf_s("%llu", &N);
+    scanf_s("%" SCNu64, &N);
     clock_t begin = clock();
     printf("[");
-    segmentedSieve(N);
+    segmented_sieve(N);
     printf("\b\b]");
     clock_t end = clock();
     time_taken = (double)(end - begin) / CLOCKS_PER_SEC;

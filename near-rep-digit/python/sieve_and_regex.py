@@ -6,51 +6,60 @@ def is_near_rep(num):
     # The second regex will find any near rep digit numbers with unique digit at first digit
     return num > 100 and (not not re.search(r'^(\d)\1*?((?!\1))\d(?:\1)*?$', str(num)) or not not re.search(r'^(\d)(?!\1)(\d)(\2)+$', str(num)))
 
-# The whole segmented sieve approach is nothing interesting
-# It's just a standard approach
+"""
+The following sieve of eratosthenes is a C implementation of an
+improved sieve of eratosthenes algorithm written by Kim Wilsch in C++
+"""
 
-def simple_sieve(limit): 
-    primes_list = [] 
-    mark = [True for i in range(limit + 1)] 
-    p = 2
-    while (p * p <= limit): 
-        if (mark[p] == True):  
-            for i in range(p * p, limit + 1, p):  
-                mark[i] = False  
-        p += 1
-    for p in range(2, limit):  
-        if mark[p]: 
-            primes_list.append(p)
-            if is_near_rep(p):
-                near_rep_primes.append(p)
-    return primes_list
+# COPYRIGHT NOTICE:-
+# BSD 2-Clause License
+#
+# Copyright (c) 2010 - 2019, Kim Walisch.
+# All rights reserved.
 
-def segmented_sieve(n): 
-    segmented_lim = int(math.floor(math.sqrt(n)) + 1) 
-    primes_list = simple_sieve(segmented_lim)
-    low = segmented_lim 
-    high = segmented_lim * 2
-    while low < n:
-        if high >= n:
-            high = n
-        mark = [True for i in range(segmented_lim + 1)]
-        for i in range(len(primes_list)):
-            lower_lim = int(math.floor(low / primes_list[i]) * 
-                                         primes_list[i]) 
-            if lower_lim < low: 
-                lower_lim += primes_list[i] 
-            for j in range(lower_lim, high, primes_list[i]): 
-                mark[j - low] = False
-        for i in range(low, high): 
-            if mark[i - low] and is_near_rep(i): 
-                near_rep_primes.append(i)
-        low = low + segmented_lim 
-        high = high + segmented_lim 
+"""
+Apart from the algorithm idea itself, everything else is written by
+[https://github.com/TotallyNotChase]
+"""
 
-near_rep_primes = []
+def segmented_sieve(limit):
+    i, n, s = 3, 3, 3
+    sqrtval = int(math.sqrt(limit))
+    segment_size = sqrtval if sqrtval > L1D_CACHE else L1D_CACHE
+    is_prime = [True for x in range(0, sqrtval + 1)]
+    prime_arr = []
+    multiples = []
+    found_primes = []
+    for low in range(0, limit + 1, segment_size):
+        sieve = [True for x in range(0, segment_size)]
+        high = low + segment_size - 1
+        high = high if high < limit else limit
+        while i * i <= high:
+            if is_prime[i]:
+                for j in range(i * i, sqrtval + 1, i):
+                    is_prime[j] = False
+            i += 2
+        while s * s <= high:
+            if is_prime[s]:
+                prime_arr.append(s)
+                multiples.append(s * s - low)
+            s += 2
+        for i_size in range(0, len(prime_arr)):
+            k = prime_arr[i_size] * 2
+            j = multiples[i_size]
+            while j < segment_size:
+                sieve[j] = False
+                j += k
+            multiples[i_size] = j - segment_size
+        while n <= high:
+            if sieve[n - low] and is_near_rep(n):
+               found_primes.append(n)
+            n += 2
+    print(found_primes)
+    
+L1D_CACHE = int(input('Enter your CPU\'s L1D cache per core (in bytes): '))
 N = input('Enter an upper limit: ')
 t0 = time.time()
 segmented_sieve(int(N))
-print(near_rep_primes)
 t1 = time.time()
 print('\nTime required:', t1 - t0)
