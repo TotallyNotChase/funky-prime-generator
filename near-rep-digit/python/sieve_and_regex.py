@@ -1,13 +1,13 @@
 import time, re, math
 
-def is_near_rep(num):
+def is_near_rep(num, PATTERN_1, PATTERN_2):
     # Regex to find near rep digit numbers
     # The first regex will find any near rep digit numbers with unique digit in middle or end
     # The second regex will find any near rep digit numbers with unique digit at first digit
-    return num > 100 and (not not re.search(r'^(\d)\1*?((?!\1))\d(?:\1)*?$', str(num)) or not not re.search(r'^(\d)(?!\1)(\d)(\2)+$', str(num)))
+    return num > 100 and (not not PATTERN_1.search(str(num)) or not not PATTERN_2.search(str(num)))
 
 """
-The following sieve of eratosthenes is a C implementation of an
+The following sieve of eratosthenes is a python implementation of an
 improved sieve of eratosthenes algorithm written by Kim Wilsch in C++
 """
 
@@ -30,6 +30,8 @@ def segmented_sieve(limit):
     prime_arr = []
     multiples = []
     found_primes = []
+    PATTERN_1 = re.compile(r'^(\d)\1*?((?!\1))\d(?:\1)*?$')
+    PATTERN_2 = re.compile(r'^(\d)(?!\1)(\d)(\2)+$')
     for low in range(0, limit + 1, segment_size):
         sieve = [True for x in range(0, segment_size)]
         high = low + segment_size - 1
@@ -52,7 +54,7 @@ def segmented_sieve(limit):
                 j += k
             multiples[i_size] = j - segment_size
         while n <= high:
-            if sieve[n - low] and is_near_rep(n):
+            if sieve[n - low] and is_near_rep(n, PATTERN_1, PATTERN_2):
                found_primes.append(n)
             n += 2
     print(found_primes)
