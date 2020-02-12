@@ -20,9 +20,9 @@ The `python` script for `non_sieve_and_unique_set` completes in **12.8 seconds**
 
 ![image](https://user-images.githubusercontent.com/44284917/73342220-1e618a00-42a4-11ea-8662-8d839e3689c4.png)
 
-The `python` script for `sieve_and_regex` completes in **6.35 seconds** (best case scenario)
+The `python` script for `sieve_and_regex` completes in **6.04 seconds** (best case scenario)
 
-![image](https://user-images.githubusercontent.com/44284917/73750540-62acc880-4783-11ea-83a8-ceab78bb0285.png)
+![image](https://user-images.githubusercontent.com/44284917/74307427-49130e80-4d8b-11ea-84d5-c51689c98223.png)
 
 The `python` script for `sieve_and_str_check` completes in **4.16 seconds** (best case scenario)
 
