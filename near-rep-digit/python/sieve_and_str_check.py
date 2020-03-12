@@ -87,7 +87,7 @@ def segmented_sieve(limit):
                found_primes.append(n)
             n += 2
     print(found_primes)
-    
+
 L1D_CACHE = int(input('Enter your CPU\'s L1D cache per core (in bytes): '))
 N = input('Enter an upper limit: ')
 t0 = time.time()
