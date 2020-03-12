@@ -217,6 +217,6 @@ int main()
     printf("\b\b]");
     clock_t end = clock();
     time_taken = (double)(end - begin) / CLOCKS_PER_SEC;
-    printf("\nDone! Exectuion time: %f\n", time_taken);
+    printf("\nDone! Execution time: %f\n", time_taken);
     return 0;
 }
